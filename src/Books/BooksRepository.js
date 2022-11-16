@@ -29,7 +29,7 @@ class BooksRepository {
     const bookIdDto = {
       id: bookProgrammerModel.bookId,
     };
-    await httpGateway.delete(this.apiUrl + `books\\${bookIdDto.id}`);
+    await httpGateway.delete(this.apiUrl + `books/${bookIdDto.id}`);
     await this.loadApiData();
     this.programmersModel.notify();
   };

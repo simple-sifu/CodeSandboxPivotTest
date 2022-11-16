@@ -5,6 +5,7 @@ import httpGateway from "./Shared/HttpGateway";
 
 let getStub = null;
 let postStub = null;
+let deleteStub = null;
 beforeEach(() => {
   booksRepository.programmersModel = new Observable([]);
 
@@ -36,12 +37,20 @@ beforeEach(() => {
     success: true,
   };
 
+  deleteStub = {
+    success: true,
+  };
+
   httpGateway.get = jest.fn().mockImplementation(() => {
     return getStub;
   });
 
   httpGateway.post = jest.fn().mockImplementation(() => {
     return postStub;
+  });
+
+  httpGateway.delete = jest.fn().mockImplementation(() => {
+    return deleteStub;
   });
 });
 
@@ -94,4 +103,33 @@ it("should load 4 viewmodel books when 1 books is added", async () => {
   expect(viewModel[1].author).toBe("Isaac Asimov");
   expect(viewModel[3].name).toBe(requestDto.name);
   expect(viewModel[3].author).toBe(requestDto.author);
+});
+
+it("should load 3 viewmodel books when 1 books is deleted", async () => {
+  let viewModel = null;
+  let booksPresenter = new BooksPresenter();
+  await booksPresenter.load((result) => {
+    viewModel = result;
+  });
+
+  expect(httpGateway.get).toHaveBeenCalledWith(
+    "https://api.logicroom.co/api/tommy.han.cs@gmail.com/books"
+  );
+  expect(viewModel.length).toBe(3);
+
+  const bookDto = {
+    bookId: 131,
+  };
+
+  getStub.result.pop();
+  await booksPresenter.deleteBook(bookDto.bookId);
+
+  expect(httpGateway.delete).toHaveBeenCalledWith(
+    `https://api.logicroom.co/api/tommy.han.cs@gmail.com/books/${bookDto.bookId}`
+  );
+  expect(viewModel.length).toBe(2);
+  expect(viewModel[0].name).toBe("Wind in the willows");
+  expect(viewModel[0].author).toBe("Kenneth Graeme");
+  expect(viewModel[1].name).toBe("I, Robot");
+  expect(viewModel[1].author).toBe("Isaac Asimov");
 });
