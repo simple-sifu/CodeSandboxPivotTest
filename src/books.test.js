@@ -15,25 +15,25 @@ beforeEach(() => {
         id: 111,
         name: "Wind in the willows",
         ownerId: "pete@logicroom.co",
-        author: "Kenneth Graeme"
+        author: "Kenneth Graeme",
       },
       {
         id: 121,
         name: "I, Robot",
         ownerId: "pete@logicroom.co",
-        author: "Isaac Asimov"
+        author: "Isaac Asimov",
       },
       {
         id: 131,
         name: "The Hobbit",
         ownerId: "pete@logicroom.co",
-        author: "Jrr Tolkein"
-      }
-    ]
+        author: "Jrr Tolkein",
+      },
+    ],
   };
 
   postStub = {
-    success: true
+    success: true,
   };
 
   httpGateway.get = jest.fn().mockImplementation(() => {
@@ -76,15 +76,19 @@ it("should load 4 viewmodel books when 1 books is added", async () => {
 
   const requestDto = {
     name: "To Kill a MockingBird",
-    author: "May Tressor"
+    author: "May Tressor",
   };
 
   getStub.result.push({
     name: requestDto.name,
-    author: requestDto.author
+    author: requestDto.author,
   });
   await booksPresenter.addBook(requestDto.name, requestDto.author);
 
+  expect(httpGateway.post).toHaveBeenCalledWith(
+    "https://api.logicroom.co/api/tommy.han.cs@gmail.com/books",
+    requestDto
+  );
   expect(viewModel.length).toBe(4);
   expect(viewModel[1].name).toBe("I, Robot");
   expect(viewModel[1].author).toBe("Isaac Asimov");
