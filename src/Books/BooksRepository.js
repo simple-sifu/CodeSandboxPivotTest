@@ -19,9 +19,17 @@ class BooksRepository {
     const requestDto = {
       name: bookProgrammerModel.name,
       author: bookProgrammerModel.author,
-      ownerId: "tommy.han.cs@gmail.com"
     };
     await httpGateway.post(this.apiUrl + "books", requestDto);
+    await this.loadApiData();
+    this.programmersModel.notify();
+  };
+
+  deleteBook = async (bookProgrammerModel) => {
+    const bookIdDto = {
+      id: bookProgrammerModel.bookId,
+    };
+    await httpGateway.delete(this.apiUrl + `books\\${bookIdDto.id}`);
     await this.loadApiData();
     this.programmersModel.notify();
   };
